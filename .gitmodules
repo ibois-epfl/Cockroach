@@ -1,0 +1,7 @@
+[submodule "Open3d"]
+	path = include/Open3d
+	url = https://github.com/isl-org/Open3D.git
+
+[submodule "Cilantro"]
+    path = include/Cilantro
+    url = https://github.com/kzampog/cilantro.git
