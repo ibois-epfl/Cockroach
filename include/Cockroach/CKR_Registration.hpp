@@ -1,7 +1,6 @@
-#include <iostream>
+#pragma once
 
-// // For Rhino.rhp
-// #include "StdAfx.h"
+#include <iostream>
 
 // Open3D
 #include "open3d/Open3D.h"
@@ -12,10 +11,6 @@
 // Cilantro
 #include <cilantro/utilities/point_cloud.hpp>
 
-// Personal
-#include "Cockroach.h"
-
-
 typedef open3d::geometry::PointCloud PC; // Opn3D point cloud
 typedef std::shared_ptr<PC> PC_ptr;
 typedef open3d::pipelines::registration::RegistrationResult RS;
@@ -25,17 +20,8 @@ typedef open3d::pipelines::registration::RegistrationResult RS;
 ///                                                                          REGISTRATION                                                                                ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///                                                                       LOCAL REGISTRATION                                                                             ///
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////
-///        EVALUATE REGISTRATION        ///
-///////////////////////////////////////////
-
-// Source:
-/* http://www.open3d.org/docs/latest/tutorial/pipelines/icp_registration.html */
-
+/// \summary Evaluate a possible first registration, it is mostly needed for a ICP.
+/// \param threshold It's the maximal distance between two pair of points to be registered.
 RS evaluateRegistration(std::shared_ptr<PC> cloudSource,
                         std::shared_ptr<PC> cloudTarget,
                         float threshold)
@@ -45,26 +31,20 @@ RS evaluateRegistration(std::shared_ptr<PC> cloudSource,
     return registration_result;
 };
 
-
-///////////////////////////////////////////
-///        ICP : POINT-TO-POINT         ///
-///////////////////////////////////////////
-
-// Source:
-/* http://www.open3d.org/docs/latest/tutorial/pipelines/robust_kernels.html */
-
-/* NO NORMALS: The ICP point-to-point do not need normals*/
-
-/* It can still mismatch geometries on the same plane (shifting is possible)*/
-
+/// \summary ICP point-to-point do not need normals but it's more expensive and prone to shifting on the same plane
+/// \param initTrans The initial transformation to refine.
+/// \param scaleIt Scale of not the source cloud to the target one.
+/// \param iterations Maximal number of iterations.
+/// \param rel_fitness Boundary of fitness (the amount of corresponding points).
+/// \param rel_RMSE Boundary of RMSE (the precision of the registration).
 RS ICPPointToPoint(std::shared_ptr<PC> cloudSource,
                    std::shared_ptr<PC> cloudTarget,
                    Eigen::Matrix4d_u initTrans,
                    float threshold,
-                   bool scaleIt,
-                   int iterations,
-                   double rel_fitness,
-                   double rel_RMSE)
+                   bool scaleIt = false,
+                   int iterations = 30,
+                   double rel_fitness = 1E-06,
+                   double rel_RMSE = 1E-06)
 {
     // Call Open3D method
     auto reg_result_ICP_PTP = open3d::pipelines::registration::RegistrationICP(*cloudSource,
@@ -77,28 +57,40 @@ RS ICPPointToPoint(std::shared_ptr<PC> cloudSource,
 };
 
 
-///////////////////////////////////////////
-///     ICP : POINT-TO-PLANE + LOSS     ///
-///////////////////////////////////////////
-
-// Source:
-/* http://www.open3d.org/docs/latest/tutorial/pipelines/robust_kernels.html */
-
-/* NORMALS: The ICP point-to-point do need normals*/
-
-/* LOSS FUNCTIONS: It can be applied to any particular registration/or not target. e.g. It deals by adding tolerances to the presence of outlier in the cloud.
- * To call it in the ICP registration we need to  add the TransformationEEstimationPointToPlane(loss), where "loss" is a given loss function (also called robust kernel),
- * there are much more, you can find the list in the method block: */
-
+/// \summary ICP point-to-plane do need normals it's faster
+/// \param initTrans The initial transformation to refine.
+/// \param enable_robust_kernel The robust kernel can be enabled when the cloud is noisy
+/// \param iterations Maximal number of iterations.
+/// \param rel_fitness Boundary of fitness (the amount of corresponding points).
+/// \param rel_RMSE Boundary of RMSE (the precision of the registration).
+/// \param close_points Number of points to be estimate the normals(the more the better).
 RS ICPPointToPlane(std::shared_ptr<PC> cloudSource,
                    std::shared_ptr<PC> cloudTarget,
                    Eigen::Matrix4d_u initTrans,
-                   float threshold, // maximum correspondence points - pair distance
-                   bool enable_robust_kernel,
-                   int iterations,
-                   double rel_fitness,
-                   double rel_RMSE,
-                   int close_points)
+                   float threshold,
+                   bool enable_robust_kernel = false,
+                   int iterations = 30,
+                   double rel_fitness = 1E-06,
+                   double rel_RMSE = 1E-06,
+                   int close_points = 100);
+
+/// \summary ICP based on color, good for final refinement (e.g. to correct shifting)
+/// \param initTrans The initial transformation to refine.
+/// \param enable_robust_kernel The robust kernel can be enabled when the cloud is noisy
+/// \param iterations Maximal number of iterations.
+/// \param rel_fitness Boundary of fitness (the amount of corresponding points).
+/// \param rel_RMSE Boundary of RMSE (the precision of the registration).
+/// \param close_points Number of points to be estimate the normals(the more the better).
+RS ICPColored(std::shared_ptr<PC> cloudSource,
+              std::shared_ptr<PC> cloudTarget,
+              Eigen::Matrix4d_u initTrans,
+              float threshold,
+              bool enable_robust_kernel = false,
+              int iterations = 30,
+              float if_kernel_lambda_geometric = 0.968f,
+              double rel_fitness = 1E-06,
+              double rel_RMSE = 1E-06,
+              int close_points = 100)
 {
     // Estimate normals because ICP point-to-plane needs it
     if (!(cloudSource->HasNormals()))
@@ -134,95 +126,28 @@ RS ICPPointToPlane(std::shared_ptr<PC> cloudSource,
     return reg_res;
 };
 
-
-///////////////////////////////////////////
-///            COLORED ICP              ///
-///////////////////////////////////////////
-
-// Source:
-/* http://www.open3d.org/docs/latest/tutorial/pipelines/colored_pointcloud_registration.html */
-
-/* NORMALS: The ICP point-to-point do need normals*/
-
-/* This algorithm is more accurate and more robust thanother PC registration alorithmss, while the running speed is comparable to that of ICP registration types*/
-
-
-RS ICPColored(std::shared_ptr<PC> cloudSource,
-              std::shared_ptr<PC> cloudTarget,
-              Eigen::Matrix4d_u initTrans,
-              float threshold,
-              bool enable_robust_kernel,
-              int iterations,
-              float if_kernel_lambda_geometric,
-              double rel_fitness,
-              double rel_RMSE,
-              int close_points)
-{
-    // Estimate normals because ICP point-to-plane needs it
-    if (!(cloudSource->HasNormals()))
-    {
-        estimateUnstructuredPCDNormals(cloudSource, close_points, 0.1);
-    }
-    if (!(cloudTarget->HasNormals()))
-    {
-        estimateUnstructuredPCDNormals(cloudTarget, close_points, 0.1);
-    }
-
-    // To store results
-    RS reg_res;
-
-    // Call function with or without robust kernel
-    if (enable_robust_kernel)
-    {
-        std::shared_ptr<open3d::pipelines::registration::RobustKernel> loss_kernel = std::make_shared<open3d::pipelines::registration::L2Loss>();
-        loss_kernel->Weight(1.0);
-
-        // Call Open3D
-        reg_res = open3d::pipelines::registration::RegistrationColoredICP(*cloudSource, *cloudTarget, threshold, initTrans,
-                                                                                   open3d::pipelines::registration::TransformationEstimationForColoredICP(if_kernel_lambda_geometric, loss_kernel),
-                                                                                   open3d::pipelines::registration::ICPConvergenceCriteria(rel_fitness, rel_RMSE, iterations));
-    }
-    else
-    {
-        // Call Open3D
-        reg_res = open3d::pipelines::registration::RegistrationColoredICP(*cloudSource, *cloudTarget, threshold, initTrans,
-                                                                                   open3d::pipelines::registration::TransformationEstimationForColoredICP(),
-                                                                                   open3d::pipelines::registration::ICPConvergenceCriteria(rel_fitness, rel_RMSE, iterations));
-    }
-    return reg_res;
-};
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///                                                                     GLOBAL  REGISTRATION                                                                             ///
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////
-///    RANSAC FEATURE GL REGISTRATION   ///
-///////////////////////////////////////////
-
-// Source:
-/* http://www.open3d.org/docs/latest/tutorial/pipelines/global_registration.html */
-
-/* This is a global registration in five steps:
- * 1) downsize the pointcloud for less computational time;
- * 2) evaluate normals and FPFH (33-ddimensional vector) which characterize the geometric features of each and single point;
- * 3) pruning algorithms: based on FPFH correspondences to get rid of possible alternatives based on distance threshold, edge length, normal angles;
- * 4) run the RANSAC-based registration;
- * 5) refine locally by ICP point-to-plane;
- */
-
+/// \summary RANSAC should be the first transformation, it can be refined later by a ICP.
+/// \param voxel_size It needs a sub-sampling because it's very expensive.
+/// \param with_ICP Include a ICP local refinement at the end.
+/// \param similarity_threshold Loose (0) or strict (1).
+/// \param checker_normal_degAngle Threshold of normal angle (the smallest, the more precise and quick).
+/// \param ransac_n Number of points for RANSAC (min. 3)
+/// \param mutual_filter True if the correspondence can be itself.
+/// \param close_points Number of points to be estimate the normals(the more the better).
+/// \param scaleIt Scale of not the source cloud to the target one.
+/// \param convergence_max_iteration Maximal number of iterations.
+/// \param convergence_confidence Boundary about the fitness of the registration (0.999 perfectly matched).
 RS registrationRANSAC(std::shared_ptr<PC> cloudSource,
                       std::shared_ptr<PC> cloudTarget,
-                      double voxel_size,
-                      bool with_ICP,
-                      double similarity_threshold,
-                      double checker_normal_degAngle, 
-                      int ransac_n, 
-                      bool mutual_filter, 
-                      bool scaleIt,
-                      int convergence_max_iteration, 
-                      float convergence_confidence) 
+                      double voxel_size = 0.005,
+                      bool with_ICP = true,
+                      double similarity_threshold = 0.9,
+                      double checker_normal_degAngle = 30,
+                      int ransac_n = 3,
+                      bool mutual_filter = true,
+                      bool scaleIt = false,
+                      int convergence_max_iteration = 300000, // the number of iter
+                      float convergence_confidence = 0.999) // related to the fitness of the registration
 {
     // Store source and target cloudsd in array
     PC_ptr low_res_clouds[2] = { cloudSource , cloudTarget };
@@ -291,30 +216,33 @@ RS registrationRANSAC(std::shared_ptr<PC> cloudSource,
         return reg_res_RANSAC;
 }
 
-
-///////////////////////////////////////////
-///     FAST FEATURE GL REGISTRATION    ///
-///////////////////////////////////////////
-
-// Source:
-/* http://www.open3d.org/docs/latest/tutorial/pipelines/global_registration.html */
-
-/* The RANSAC based global registration solution may take a long time due to countless model proposals and evaluations. [Zhou2016] introduced a faster approach that
- * quickly optimizes line process weights of few correspondences. As there is no model proposal and evaluation invlolved for each iteration, this approach can save a lot
- * of computational time. With proper configuration, the accuracy of fast global registration is even comparable to ICP. */
-
+/// \summary Fast Global registration, with accurate parameters it can.
+/// \param voxel_size size in meter for downsampling.
+/// \param division_factor Division factor used for graduated non-convexity.
+/// \param use_absolute_scale Measure distance in absolute scale (1) or in
+/// scale relative to the diameter of the model (0).
+/// \param decrease_mu Set
+/// to `true` to decrease scale mu by division_factor for graduated
+/// non-convexity.
+/// \param maximum_correspondence_distance Maximum
+/// correspondence distance (also see comment of USE_ABSOLUTE_SCALE).
+/// \param iteration_number Maximum number of iterations.
+/// \param tuple_scale Similarity measure used for tuples of feature points.
+/// \param maximum_tuple_count Maximum numer of tuples.
+/// \param checker_edge_length FPFH checker on maximum edge length
+/// \param checker_normal_degAngle FPFH chcecker on normal angles deviation
 RS registrationFast(std::shared_ptr<PC> cloudSource,
                       std::shared_ptr<PC> cloudTarget,
-                      double voxel_size,
-                      double division_factor,
-                      bool use_absolute_scale,
-                      bool decrease_mu,
-                      float maximum_correspondence_distance,
-                      int iteration_number,
-                      double tuple_scale,
-                      int maximum_tuple_count,
-                      double checker_edge_length,
-                      double checker_normal_degAngle)
+                      double voxel_size = 0.005,
+                      double division_factor = 1.4,
+                      bool use_absolute_scale = false,
+                      bool decrease_mu = true,
+                      float maximum_correspondence_distance = 0.025,
+                      int iteration_number = 64,
+                      double tuple_scale = 0.95,
+                      int maximum_tuple_count = 1000,
+                      double checker_edge_length = 0.9,
+                      double checker_normal_degAngle = 30) // in radians 0.5 ~ 30 deg
 {
     // Store source and target cloudsd in array
     PC_ptr low_res_clouds[2] = { cloudSource , cloudTarget };

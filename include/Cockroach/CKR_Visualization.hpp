@@ -1,23 +1,16 @@
+#pragma once
+
 #include <iostream>
-
-// // For Rhino.rhp
-// #include "StdAfx.h"
-
 
 // Open3D
 #include "open3d/Open3D.h"
-#include "Cockroach.h"
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///                                                                          VISUALIZATION                                                                               ///
+///                                                                        VISUALIZATION                                                                                 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////
-///              STANDARD               ///
-///////////////////////////////////////////
-
-void visualize_standard (std::shared_ptr<open3d::geometry::PointCloud> cloud)
+/// \summary Standard visualization.
+void visualize_standard(std::shared_ptr<open3d::geometry::PointCloud> cloud)
 {
     cloud->EstimateNormals();
     std::shared_ptr<open3d::visualization::Visualizer> vis(new open3d::visualization::Visualizer());
@@ -26,14 +19,9 @@ void visualize_standard (std::shared_ptr<open3d::geometry::PointCloud> cloud)
     vis->GetRenderOption().background_color_ = Eigen::Vector3d(0, 0, 0);
     vis->Run();
     vis->DestroyVisualizerWindow();
-}
+};
 
-
-///////////////////////////////////////////
-///              BI-COLORS              ///
-///////////////////////////////////////////
-
-// With transformation
+/// \summary Visualize two clouds for registration.
 void visualize_bicolor(std::shared_ptr<open3d::geometry::PointCloud> cloudSource, std::shared_ptr<open3d::geometry::PointCloud> cloudTarget, Eigen::Matrix4d transformation)
 {
     // Color palette
@@ -74,9 +62,8 @@ void visualize_bicolor(std::shared_ptr<open3d::geometry::PointCloud> cloudSource
         return;
     }
     return;
-}
+};
 
-// Without transformation
 void visualize_bicolor(std::shared_ptr<open3d::geometry::PointCloud> cloudSource, std::shared_ptr<open3d::geometry::PointCloud> cloudTarget)
 {
     // Color palette
@@ -113,11 +100,7 @@ void visualize_bicolor(std::shared_ptr<open3d::geometry::PointCloud> cloudSource
     return;
 };
 
-
-///////////////////////////////////////////
-///               NORMALS               ///
-///////////////////////////////////////////
-
+/// \summary Visualize cloud with normals.
 void visualize_cloudNormals(std::shared_ptr<open3d::geometry::PointCloud> cloud)
 {
     cloud->EstimateNormals();
@@ -130,4 +113,3 @@ void visualize_cloudNormals(std::shared_ptr<open3d::geometry::PointCloud> cloud)
     vis->Run();
     vis->DestroyVisualizerWindow();
 };
-

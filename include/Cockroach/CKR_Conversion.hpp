@@ -1,8 +1,4 @@
-#include <iostream>
-
-
-// For Rhino.rhp
-#include "StdAfx.h"
+#pragma once
 
 // Open3D
 #include "open3d/Open3D.h"
@@ -10,30 +6,21 @@
 #include <open3d/pipelines/registration/ColoredICP.h>
 #include <open3d/pipelines/registration/FastGlobalRegistration.h>
 
+// Cilantro
+#include <cilantro/utilities/point_cloud.hpp>
+
 //// PCL
 //#include <pcl/io/pcd_io.h>
 //#include <pcl/point_types.h>
 
-// Cilantro
-#include <cilantro/utilities/point_cloud.hpp>
-
-// Personal
-#include "Cockroach.h"
-
-
 typedef open3d::geometry::PointCloud PC; // Opn3D point cloud
 typedef std::shared_ptr<PC> PC_ptr;
-typedef open3d::pipelines::registration::RegistrationResult RS;
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///                                                                   CONVERSION FROM LIB TO LIB                                                                         ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////
-///          CILANTRO - OPEN3D          ///
-///////////////////////////////////////////
-
+/// \summary Cilantro > OP3.
 void convert_CilantroToOpen3DCloud(std::shared_ptr<cilantro::PointCloud3f> cilantro_cloud_f, std::shared_ptr<PC> open3d_cloud_d)
 {
     auto ptt = cilantro_cloud_f->points;
@@ -61,8 +48,9 @@ void convert_CilantroToOpen3DCloud(std::shared_ptr<cilantro::PointCloud3f> cilan
             open3d_cloud_d->normals_.push_back(no_d);
         }
     }
-}
+};
 
+/// \summary OP3 > Cilantro.
 void convert_Open3DToCilantroCloud(std::shared_ptr<PC> open3d_cloud_d, std::shared_ptr<cilantro::PointCloud3f> cilantro_cloud_f)
 {
     // Convert points
@@ -102,46 +90,44 @@ void convert_Open3DToCilantroCloud(std::shared_ptr<PC> open3d_cloud_d, std::shar
     }
     cilantro_cloud_f->normals = nor;
 
-}
+};
 
-///////////////////////////////////////////
-///            PCL - OPEN3D             ///
-///////////////////////////////////////////
-
-//// From PCL to Open3D
-//void convert_PCLXYZToOpen3DCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud, std::shared_ptr<PC> open3d_cloud)
-//{
+// /// \summary PCLXYZ > OP3.
+// void convert_PCLXYZToOpen3DCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud, std::shared_ptr<PC> open3d_cloud)
+// {
 //    const uint32_t size = pcl_cloud->size();
 //    open3d_cloud->points_.resize(size);
-//
+
 //    #pragma omp parallel for
 //    for (int32_t i = 0; i < size; i++)
 //    {
 //        open3d_cloud->points_[i] = pcl_cloud->points[i].getVector3fMap().cast<double>();
 //    }
-//}
-//
-//void convert_PCLToOpen3DNormal(pcl::PointCloud<pcl::Normal>::Ptr pcl_normal, std::vector<Eigen::Vector3d> open3d_normal)
-//{
+// };
+
+// /// \summary PCLNormal > OP3.
+// void convert_PCLToOpen3DNormal(pcl::PointCloud<pcl::Normal>::Ptr pcl_normal, std::vector<Eigen::Vector3d> open3d_normal)
+// {
 //    const uint32_t size = pcl_normal->size();
-//
+
 //    open3d_normal.resize(size);
-//
+
 //    #pragma omp parallel for
 //    for (int32_t i = 0; i < size; i++)
 //    {
 //        open3d_normal[i] = pcl_normal->points[i].getNormalVector3fMap().cast<double>();
 //    }
-//
-//}
-//
-//void convert_PCLXYZRGBToOpen3DCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_cloud, std::shared_ptr<PC> open3d_cloud)
-//{
+
+// };
+
+// /// \summary PCLXYZRGB > OP3.
+// void convert_PCLXYZRGBToOpen3DCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_cloud, std::shared_ptr<PC> open3d_cloud)
+// {
 //    const uint32_t size = pcl_cloud->size();
-//
+
 //    open3d_cloud->points_.resize(size);
 //    open3d_cloud->colors_.resize(size);
-//
+
 //    constexpr double normal = 1.0 / 255.0;
 //    #pragma omp parallel for
 //    for (int32_t i = 0; i < size; i++)
@@ -150,15 +136,16 @@ void convert_Open3DToCilantroCloud(std::shared_ptr<PC> open3d_cloud_d, std::shar
 //        const uint32_t color = *reinterpret_cast<uint32_t*>(&pcl_cloud->points[i].rgb);
 //        open3d_cloud->colors_[i] = Eigen::Vector3d((color >> 16) & 0x0000ff, (color >> 8) & 0x0000ff, color & 0x0000ff) * normal;
 //    }
-//}
-//
-//void convert_PCLXYZRGBAToOpen3Cloud(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr pcl_cloud, std::shared_ptr<PC> open3d_cloud)
-//{
+// };
+
+// /// \summary PCLXYZRGBA > OP3.
+// void convert_PCLXYZRGBAToOpen3Cloud(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr pcl_cloud, std::shared_ptr<PC> open3d_cloud)
+// {
 //    const uint32_t size = pcl_cloud->size();
-//
+
 //    open3d_cloud->points_.resize(size);
 //    open3d_cloud->colors_.resize(size);
-//
+
 //    constexpr double normal = 1.0 / 255.0;
 //    #pragma omp parallel for
 //    for (int32_t i = 0; i < size; i++)
@@ -167,16 +154,17 @@ void convert_Open3DToCilantroCloud(std::shared_ptr<PC> open3d_cloud_d, std::shar
 //        const uint32_t color = pcl_cloud->points[i].rgba;
 //        open3d_cloud->colors_[i] = Eigen::Vector3d((color >> 16) & 0x000000ff, (color >> 8) & 0x000000ff, color & 0x000000ff) * normal;
 //    }
-//}
-//
-//void convert_PCLXYZRGBNormalToOpen3DCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr pcl_cloud, std::shared_ptr<PC> open3d_cloud)
-//{
+// };
+
+// /// \summary PCLXYZRGBNormal > OP3.
+// void convert_PCLXYZRGBNormalToOpen3DCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr pcl_cloud, std::shared_ptr<PC> open3d_cloud)
+// {
 //    const uint32_t size = pcl_cloud->size();
-//
+
 //    open3d_cloud->points_.resize(size);
 //    open3d_cloud->normals_.resize(size);
 //    open3d_cloud->colors_.resize(size);
-//
+
 //    constexpr double normal = 1.0 / 255.0;
 //    #pragma omp parallel for
 //    for (int32_t i = 0; i < size; i++)
@@ -186,47 +174,49 @@ void convert_Open3DToCilantroCloud(std::shared_ptr<PC> open3d_cloud_d, std::shar
 //        const uint32_t color = *reinterpret_cast<uint32_t*>(&pcl_cloud->points[i].rgb);
 //        open3d_cloud->colors_[i] = Eigen::Vector3d((color >> 16) & 0x0000ff, (color >> 8) & 0x0000ff, color & 0x0000ff) * normal;
 //    }
-//}
+// };
 
-//// From Open3D to PCL
-//void convert_Open3DToPCLXYZCloud(std::shared_ptr<PC> open3d_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud)
-//{
+// /// \summary OP3 > PCLXYZ.
+// void convert_Open3DToPCLXYZCloud(std::shared_ptr<PC> open3d_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud)
+// {
 //    const uint32_t size = open3d_cloud->points_.size();
-//
+
 //    pcl_cloud->width = size;
 //    pcl_cloud->height = 1;
 //    pcl_cloud->is_dense = false;
 //    pcl_cloud->points.resize(size);
-//
+
 //    #pragma omp parallel for
 //    for (int32_t i = 0; i < size; i++)
 //    {
 //        pcl_cloud->points[i].getVector3fMap() = open3d_cloud->points_[i].cast<float>();
 //    }
-//}
-//
-//void convert_Open3DToPCLNormal(std::vector<Eigen::Vector3d> open3d_normal, pcl::PointCloud<pcl::Normal>::Ptr pcl_normal)
-//{
+// };
+
+// /// \summary OP3 > PCLNormal.
+// void convert_Open3DToPCLNormal(std::vector<Eigen::Vector3d> open3d_normal, pcl::PointCloud<pcl::Normal>::Ptr pcl_normal)
+// {
 //    const uint32_t size = open3d_normal.size();
 //    const Eigen::Vector3f zero = Eigen::Vector3f::Zero();
-//
+
 //    #pragma omp parallel for
 //    for (int32_t i = 0; i < size; i++)
 //    {
 //        const Eigen::Vector3f normal = ( !open3d_normal.empty() ) ? open3d_normal[i].cast<float>() : zero;
 //        std::copy(normal.data(), normal.data() + normal.size(), pcl_normal->points[i].normal);
 //    }
-//}
-//
-//void convert_Open3DToPCLXYZRGBCloud(std::shared_ptr<PC> open3d_cloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_cloud)
-//{
+// };
+
+// /// \summary OP3 > PCLXYZRGB.
+// void convert_Open3DToPCLXYZRGBCloud(std::shared_ptr<PC> open3d_cloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_cloud)
+// {
 //    const uint32_t size = open3d_cloud->points_.size();
-//
+
 //    pcl_cloud->width = size;
 //    pcl_cloud->height = 1;
 //    pcl_cloud->is_dense = false;
 //    pcl_cloud->points.resize(size);
-//
+
 //    if (open3d_cloud->HasColors())
 //    {
 //        #pragma omp parallel for
@@ -248,17 +238,18 @@ void convert_Open3DToCilantroCloud(std::shared_ptr<PC> open3d_cloud_d, std::shar
 //            pcl_cloud->points[i].rgb = *reinterpret_cast<float*>(&rgb);
 //        }
 //    }
-//}
-//
-//void convert_Open3DToPCLXYZRGBACloud(std::shared_ptr<PC> open3d_cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr pcl_cloud)
-//{
+// };
+
+// /// \summary OP3 > PCLXYZRGBA.
+// void convert_Open3DToPCLXYZRGBACloud(std::shared_ptr<PC> open3d_cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr pcl_cloud)
+// {
 //    const uint32_t size = open3d_cloud->points_.size();
-//
+
 //    pcl_cloud->width = size;
 //    pcl_cloud->height = 1;
 //    pcl_cloud->is_dense = false;
 //    pcl_cloud->points.resize(size);
-//
+
 //    if (open3d_cloud->HasColors())
 //    {
 //        #pragma omp parallel for
@@ -278,18 +269,19 @@ void convert_Open3DToCilantroCloud(std::shared_ptr<PC> open3d_cloud_d, std::shar
 //            pcl_cloud->points[i].rgba = 0xff000000;
 //        }
 //    }
-//}
-//
-//void convert_Open3DToPCLXYZRGBNormalCloud(std::shared_ptr<PC> open3d_cloud, pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr pcl_cloud)
-//{
+// };
+
+// /// \summary OP3 > PCLXYZRGBNormal.
+// void convert_Open3DToPCLXYZRGBNormalCloud(std::shared_ptr<PC> open3d_cloud, pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr pcl_cloud)
+// {
 //    const uint32_t size = open3d_cloud->points_.size();
 //    const Eigen::Vector3f zero = Eigen::Vector3f::Zero();
-//
+
 //    pcl_cloud->width = size;
 //    pcl_cloud->height = 1;
 //    pcl_cloud->is_dense = false;
 //    pcl_cloud->points.resize(size);
-//
+
 //    #pragma omp parallel for
 //    for (int32_t i = 0; i < size; i++)
 //    {
@@ -300,4 +292,4 @@ void convert_Open3DToCilantroCloud(std::shared_ptr<PC> open3d_cloud_d, std::shar
 //        const Eigen::Vector3f normal = (open3d_cloud->HasNormals()) ? open3d_cloud->normals_[i].cast<float>() : zero;
 //        std::copy(normal.data(), normal.data() + normal.size(), pcl_cloud->points[i].normal);
 //    }
-//}
+// };
