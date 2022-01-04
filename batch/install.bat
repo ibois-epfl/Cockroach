@@ -1,5 +1,5 @@
 @ECHO OFF
 ECHO ============================================================
-ECHO Launching Cockroach .exe
+ECHO Installing Cockroach
 ECHO ============================================================
-build\x64\Release\Cockroach.exe
+cmake --build build --config Release --target install
