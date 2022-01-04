@@ -20,3 +20,20 @@ Then, just type the following to configure, build and launch the compiled .exe p
 ```terminal
 ./batch/launch.bat
 ```
+
+
+===========================
+Second version
+
+1/ Configuration in root folder of binaries
+```terminal
+mkdir build
+cmake -S . -B build
+```
+
+2/ Installation
+```terminal
+cmake --build build --config Release --target install
+```
+
+Stop the header-only cockroach library is installed

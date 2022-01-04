@@ -30,7 +30,7 @@ write_basic_package_version_file("${PROJECT_NAME}ConfigVersion.cmake"
                                 COMPATIBILITY SameMajorVersion)
 
 if(NOT INCLUDE_INSTALL_DIR)
-  set(INCLUDE_INSTALL_DIR include/hello)
+  set(INCLUDE_INSTALL_DIR include/Cockroach)
 endif()
 
 configure_package_config_file(
