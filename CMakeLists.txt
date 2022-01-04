@@ -1,7 +1,10 @@
 # Build
 cmake_minimum_required(VERSION 3.12)
 
-project(Cockroach VERSION 2.0.0 LANGUAGES CXX)
+project(Cockroach VERSION 1.0.1 LANGUAGES CXX)
+set(PROJECT_DESCRIPTION "A header only c++ umbrella library for point cloud procecssing")
+set(PROJECT_HOMEPAGE_URL "https://github.com/ibois-epfl/Cockroach")
+set(PROJECT_EMAIL "andrea.settimi@epfl.ch")
 
 include(GNUInstallDirs)
 
