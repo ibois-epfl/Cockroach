@@ -1,8 +1,10 @@
-#=============================================================================
-# Part 1:
+# Build
 cmake_minimum_required(VERSION 3.22.1)
 
 project(Cockroach VERSION 2.0.0 LANGUAGES CXX)
+
+# Only linux?
+set(${CMAKE_INSTALL_LIBDIR} "C:/program files/${PROJECT_NAME}")
 
 add_library(${PROJECT_NAME} INTERFACE)
 
@@ -15,8 +17,6 @@ target_include_directories(
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-#=============================================================================
-# Part 3
 # Install
 install(TARGETS ${PROJECT_NAME}
         EXPORT ${PROJECT_NAME}_Targets
