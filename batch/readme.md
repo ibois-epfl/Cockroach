@@ -4,11 +4,13 @@ Be sure to run the Windows terminal as an Administrator.
 
 Then, just type the following to configure, build and launch the compiled .exe program (Release mode) from the main root of the project (i.e., C:\Program Files\Cockroach\build):
 
-> 💬 The configuration is set with testing OFF. If you want to run test you have to run manually the command with `-DBUILD_TESTING=ON`.
+** to be confirmed if you build cmake with this one for header-only libraries **
 
 ```terminal
-./batch/configure.bat
+./batch/configure_INSTALL.bat
 ```
+
+
 
 > 💬 Be sure to have the MSBuild.exe folder in the path environments.
 
