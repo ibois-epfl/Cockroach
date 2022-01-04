@@ -7,7 +7,7 @@ int main()
     using namespace Cockroach;
 
 
-    std::string value = greeting();
+    std::string value = greetings();
     std::cout << value << std::endl;
 
     return 0;
