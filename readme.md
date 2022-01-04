@@ -36,7 +36,7 @@ cmake --build build --config Release
 or alternatively by using the MSbuild.exe. Just be sure that it is in your environment path.
 
 ```terminal
-MSBuild.exe -t:rebuild build/Cockroach.sln /property:Configuration=Release
+MSBuild.exe -t:rebuild build/<name-of-the-project>.sln /property:Configuration=Release
 ```
 
 Cockroach headers should be referenced and the .exe should work.
