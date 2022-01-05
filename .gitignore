@@ -46,6 +46,3 @@ _deps
 # Ignore the building folder
 build
 [Bb][Uu][Ii][Ll][Dd]
-
-# Ignore the test folder
-[Tt][Ee][Ss][Tt]

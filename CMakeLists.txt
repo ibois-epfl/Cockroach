@@ -29,6 +29,12 @@ target_include_directories(
 )
 
 #--------------------------------------------------------------------------------------------------
+#                                    Third-parties
+#--------------------------------------------------------------------------------------------------
+
+
+
+#--------------------------------------------------------------------------------------------------
 #                                    Test
 #--------------------------------------------------------------------------------------------------
 
@@ -53,7 +59,6 @@ write_basic_package_version_file("${PROJECT_NAME}ConfigVersion.cmake"
                                 COMPATIBILITY SameMajorVersion
 )
 
-# Where to place all the header files
 if(NOT INCLUDE_INSTALL_DIR)
   set(INCLUDE_INSTALL_DIR include/Cockroach)
 endif()
