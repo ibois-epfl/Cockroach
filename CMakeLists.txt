@@ -65,6 +65,18 @@ target_include_directories(
 #     PRIVATE open3d
 # )
 
+# Open3D
+find_package(Open3D REQUIRED)
+if(Open3D_FOUND AND Open3D_VERSION_MAJOR LESS_EQUAL "14")
+    message(STATUS "Open3d version ${Open3D_VERSION} found in the system, no need to reinstall it")
+else()
+    message(FATAL_ERROR "Open3d not found")
+    # download open3d submodule, configure, build and install
+endif()
+
+# Cilantro
+
+
 #--------------------------------------------------------------------------------------------------
 #                                    Test
 #--------------------------------------------------------------------------------------------------
