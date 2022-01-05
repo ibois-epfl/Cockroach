@@ -5,9 +5,13 @@
 int main()
 {
 
-    std::string value = Cockroach::greetings();
-    std::cout << value << std::endl;
+    // std::string value = Cockroach::greetings();
+    // std::cout << value << std::endl;
 
-    return 0;
+    // return 0;
+
+    
+
+
 }
 
