@@ -36,15 +36,15 @@ include(GNUInstallDirs)
 # endif()
 
 # # Check if open3d sub-modules were downloaded
-# if(NOT EXISTS "${PROJECT_SOURCE_DIR}/include/third_parties/open3d/CMakeLists.txt")
+# if(NOT EXISTS "${PROJECT_SOURCE_DIR}/third_parties/open3d/CMakeLists.txt")
 #     message(FATAL_ERROR "The open3d submodules was not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 # endif()
 
 # # Add Open3d sub-directory
-# add_subdirectory(include/third_parties/open3d)
+# add_subdirectory(third_parties/open3d)
 
 # target_include_directories(${PROJECT_NAME}
-#     PUBLIC include/third_parties/open3d
+#     PUBLIC third_parties/open3d
 # )
 
 # target_link_directories(${PROJECT_NAME}

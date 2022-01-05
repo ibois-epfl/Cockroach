@@ -4,10 +4,8 @@
 
 int main()
 {
-    using namespace Cockroach;
 
-
-    std::string value = greetings();
+    std::string value = Cockroach::greetings();
     std::cout << value << std::endl;
 
     return 0;
