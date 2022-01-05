@@ -9,9 +9,6 @@
 // // Cilantro
 // #include <cilantro/utilities/point_cloud.hpp>
 
-// Personal
-#include "Cockroach.h"
-
 
 typedef open3d::geometry::PointCloud PC; // Opn3D point cloud
 typedef std::shared_ptr<PC> PC_ptr;
