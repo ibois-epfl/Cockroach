@@ -51,6 +51,16 @@ include(GNUInstallDirs)
 #     PRIVATE open3d
 # )
 
+
+# Eigen
+find_package(Eigen3 REQUIRED)
+if(Eigen3_FOUND AND Eigen3_VERSION_MAJOR GREATER_EQUAL "3" AND Eigen3_VERSION_MINOR GREATER "2")
+    message(STATUS "Eigen3 version ${Eigen3_VERSION} found in the system, no need to reinstall it")
+else()
+    message(FATAL_ERROR "Eigen3 not found")
+    # download Eigen3 configure and install
+endif()
+
 # Open3D
 find_package(Open3D REQUIRED)
 if(Open3D_FOUND AND Open3D_VERSION_MAJOR LESS_EQUAL "14")
