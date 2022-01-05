@@ -1,5 +1,5 @@
 #--------------------------------------------------------------------------------------------------
-#                                    Build
+#                                    Info project
 #--------------------------------------------------------------------------------------------------
 # Cmake minimal version
 cmake_minimum_required(VERSION 3.12)
@@ -13,20 +13,6 @@ set(PROJECT_EMAIL "andrea.settimi@epfl.ch")
 
 # Machine's specifics
 include(GNUInstallDirs)
-
-# Specify the library as header-only as Interface
-add_library(${PROJECT_NAME} INTERFACE)
-
-# Specify compiler's requirements
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
-
-# Specify the header files' directory
-target_include_directories(
-    ${PROJECT_NAME}
-    INTERFACE
-    $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
 
 #--------------------------------------------------------------------------------------------------
 #                                    Third-parties
@@ -75,6 +61,32 @@ else()
 endif()
 
 # Cilantro
+find_package(Cilantro REQUIRED)
+if(Cilantro_FOUND)
+    message(STATUS "Cilantro found in the system, no need to reinstall it")
+else()
+    message(FATAL_ERROR "Cilantro not found")
+    # download Cilantro submodule, configure, build and install
+endif()
+
+#--------------------------------------------------------------------------------------------------
+#                                    Configure
+#--------------------------------------------------------------------------------------------------
+
+# Specify the library as header-only as Interface
+add_library(${PROJECT_NAME} INTERFACE)
+
+# Specify compiler's requirements
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
+
+# Specify the header files' directory
+target_include_directories(
+    ${PROJECT_NAME}
+    INTERFACE
+    $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
 
 
 #--------------------------------------------------------------------------------------------------
