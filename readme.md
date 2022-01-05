@@ -43,7 +43,6 @@ Cockroach headers should be referenced and the .exe should work.
 
 
 
-==============================
 12:01 05/01/2022
 
 =================
@@ -61,15 +60,17 @@ git clone https://gitlab.com/libeigen/eigen.git
 
 the full config cmd is the following (open3d will be installed in C:/Program Files so you would need admin access for the terminal):
 
-cmake -S .. -B . -G "Visual Studio 16 2019" -A x64 -DBUILD_EXAMPLES=OFF -DBUILD_PYTHON_MODULE=OFF -DBUILD_CACHED_CUDA_MANAGER=OFF
+mkdir build
+
+cmake -S . -B build -G "Visual Studio 16 2019" -A x64 -DBUILD_SHARED_LIBS=ON -DBUILD_EXAMPLES=OFF -DBUILD_PYTHON_MODULE=OFF -DBUILD_CACHED_CUDA_MANAGER=OFF -DBUILD_WEBRTC=OFF
 
 Next you build it:
 
-cmake --build . --config Release --target ALL_BUILD
+cmake --build build --config Release --target ALL_BUILD
 
 And finally you isntall it:
 
-cmake --build . --config Release --target INSTALL
+cmake --build build --config Release --target INSTALL
 
 
 
@@ -79,19 +80,19 @@ cmake --build . --config Release --target INSTALL
 ================
 
 **Cilantro**
+***COMPILE LIBRARY WITH DYNAMIC DLL***
+
 
 - Configure first the project
 
 mkdir build
 
-cd build
-
-cmake -S .. -B . -G "Visual Studio 16 2019" -A x64 
+cmake -S . -B build -G "Visual Studio 16 2019" -A x64 -DBUILD_SHARED_LIBS=ON
 
 - build it
 
-cmake --build . --config Release --target ALL_BUILD
+cmake --build build --config Release --target ALL_BUILD
 
 - and install it
 
-cmake --build . --config Release --target INSTALL
+cmake --build build --config Release --target INSTALL

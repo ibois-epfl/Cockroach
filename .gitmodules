@@ -1,6 +1,3 @@
-[submodule "include/third_parties/open3d"]
-	path = include/third_parties/open3d
-	url = https://github.com/isl-org/Open3D.git
 [submodule "third_parties/Open3D"]
 	path = third_parties/Open3D
 	url = https://github.com/isl-org/Open3D.git

@@ -57,18 +57,35 @@ endif()
 # Find installed Open3D, which exports Open3D::Open3D
 find_package(Open3D REQUIRED)
 
+# # Find Cockroach
+find_package(Cockroach CONFIG REQUIRED)
+message("Cockroach_DIR: ${Cockroach_DIR}")
+message("Cockroach_INCLUDE_DIR: ${Cockroach_INCLUDE_DIR}")
+include_directories(${Cockroach_INCLUDE_DIR})
+
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE Open3D::Open3D)
 
+# #Cockroach target
+target_link_libraries(${PROJECT_NAME} PRIVATE Cockroach::Cockroach)
+
+# # #Cockroach custom targets
+# add_custom_target (run
+#     COMMAND show_the_bug
+#     DEPENDS show_the_bug
+#     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+# )
+
+
 # On Windows if BUILD_SHARED_LIBS is enabled, copy .dll files to the executable directory
-# if(WIN32)
-#     get_target_property(open3d_type Open3D::Open3D TYPE)
-#     if(open3d_type STREQUAL "SHARED_LIBRARY")
-#         message(STATUS "Copying Open3D.dll to ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
-#         add_custom_command(TARGET Draw POST_BUILD
-#                            COMMAND ${CMAKE_COMMAND} -E copy
-#                                    ${CMAKE_INSTALL_PREFIX}/bin/Open3D.dll
-#                                    ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
-#     endif()
-# endif()
+if(WIN32)
+    get_target_property(open3d_type Open3D::Open3D TYPE)
+    if(open3d_type STREQUAL "SHARED_LIBRARY")
+        message(STATUS "Copying Open3D.dll to ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                           COMMAND ${CMAKE_COMMAND} -E copy
+                                   ${CMAKE_INSTALL_PREFIX}/bin/Open3D.dll
+                                   ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
+    endif()
+endif()

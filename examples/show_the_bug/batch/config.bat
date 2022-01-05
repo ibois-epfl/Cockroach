@@ -1,6 +1,6 @@
 @ECHO OFF
 ECHO ============================================================
-ECHO Configuring Cockroach library
+ECHO Configuring Project
 ECHO ============================================================
 rmdir build
 mkdir build

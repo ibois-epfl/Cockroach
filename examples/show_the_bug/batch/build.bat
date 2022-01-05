@@ -1,6 +1,6 @@
 @ECHO OFF
 ECHO ============================================================
-ECHO Building the project linked to Cockroach in Release and run the .exe
+ECHO Building the project
 ECHO ============================================================
 rmdir build
 mkdir build
