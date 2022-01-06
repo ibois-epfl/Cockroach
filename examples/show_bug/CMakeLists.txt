@@ -1,4 +1,5 @@
-project(show_the_bug LANGUAGES C CXX)
+cmake_minimum_required(VERSION 3.12)
+project(show_bug LANGUAGES C CXX)
 
 # The options need to be the same as Open3D's default
 # If Open3D is configured and built with custom options, you'll also need to

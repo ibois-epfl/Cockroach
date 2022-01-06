@@ -1,21 +1,40 @@
 // #include <Cockroach.hpp>
 #include <iostream>
+#include <filesystem>
 #include <Cockroach.hpp>
 
 
-typedef open3d::geometry::PointCloud PC; // Opn3D point cloud
+typedef open3d::geometry::PointCloud PC;
 typedef std::shared_ptr<PC> PC_ptr;
+
+string pathAppend(const string& p1, const string& p2) {
+
+   char sep = '/';
+   string tmp = p1;
+
+#ifdef _WIN32
+  sep = '\\';
+#endif
+
+  if (p1[p1.length()] != sep) { // Need to add a
+     tmp += sep;                // path separator
+     return(tmp + p2);
+  }
+  else
+     return(p1 + p2);
+}
 
 
 int main()
 {
-    // using namespace Cockroach;
+    // Get current directory
+    std::filesystem::path c_dir = std::filesystem::current_path().string();
+    std::string p_dir = c_dir.parent_path().string();
+    std::string cloud_name = p_dir + "cloud" + "/" + "cube.ply";
 
-    std::cout << "Pop_1" << std::endl;
-
-    // std::shared_ptr<PC> cloud(new PC);
-    // cloud = Cockroach::importCloud("cube.ply");
-    // visualize_standard(cloud);
+    std::shared_ptr<PC> cloud(new PC);
+    cloud = Cockroach::importCloud(cloud_name);
+    Cockroach::visualize_standard(cloud);
 
     // std::shared_ptr<PC> cloud(new PC);
     // const open3d::io::ReadPointCloudOption PC_options;
@@ -35,8 +54,7 @@ int main()
     //     if (std::cin.get()) throw "No point cloud imported";
     // }
 
-    std::cout << Cockroach::greetings() << std::endl;
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
