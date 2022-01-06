@@ -1,7 +1,18 @@
 @ECHO OFF
 ECHO ============================================================
-ECHO Configuring Cockroach library
+ECHO Configuring Cockroach Library
 ECHO ============================================================
-rmdir build
-mkdir build
+
+:: Check for build/ delete or create
+if exist build\ (
+    ECHO build\ exists and it is being erased
+    rmdir /Q /S build
+    mkdir build
+) else (
+    ECHO build\ does not exist and it is being created
+    mkdir build
+)
+
+:: Configure the project
+ECHO Configuring the CMake project now...
 cmake -S . -B build -G "Visual Studio 16 2019" -A x64

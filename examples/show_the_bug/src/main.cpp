@@ -1,6 +1,5 @@
 // #include <Cockroach.hpp>
 #include <iostream>
-#include <open3d/Open3D.h>
 #include <Cockroach.hpp>
 
 
@@ -15,7 +14,7 @@ int main(int argc, char *argv[])
     std::cout << "Pop_1" << std::endl;
 
     std::shared_ptr<PC> cloud(new PC);
-    cloud = Cockroach::importCloud("../cloud/cube.ply");
+    cloud = Cockroach::importCloud("cube.ply");
     // visualize_standard(cloud);
 
     // std::shared_ptr<PC> cloud(new PC);
