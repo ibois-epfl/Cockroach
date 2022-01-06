@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(show_bug LANGUAGES C CXX)
 
+
 # The options need to be the same as Open3D's default
 # If Open3D is configured and built with custom options, you'll also need to
 # specify the same custom options.
@@ -16,7 +17,7 @@ find_package(Open3D CONFIG REQUIRED)
 message("Open3D_DIR: ${Open3D_DIR}")
 message("Open3D_INCLUDE_DIR: ${Open3D_INCLUDE_DIR}")
 
-# # Find Cockroach
+# Find Cockroach
 find_package(Cockroach CONFIG REQUIRED)
 message("Cockroach_DIR: ${Cockroach_DIR}")
 message("Cockroach_INCLUDE_DIR: ${Cockroach_INCLUDE_DIR}")
