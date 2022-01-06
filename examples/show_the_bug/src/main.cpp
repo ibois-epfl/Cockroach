@@ -7,14 +7,14 @@ typedef open3d::geometry::PointCloud PC; // Opn3D point cloud
 typedef std::shared_ptr<PC> PC_ptr;
 
 
-int main(int argc, char *argv[])
+int main()
 {
     // using namespace Cockroach;
 
     std::cout << "Pop_1" << std::endl;
 
-    std::shared_ptr<PC> cloud(new PC);
-    cloud = Cockroach::importCloud("cube.ply");
+    // std::shared_ptr<PC> cloud(new PC);
+    // cloud = Cockroach::importCloud("cube.ply");
     // visualize_standard(cloud);
 
     // std::shared_ptr<PC> cloud(new PC);
