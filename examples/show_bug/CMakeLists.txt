@@ -34,8 +34,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Cockroach::Cockroach)
 
 
 
-# On Windows if BUILD_SHARED_LIBS is enabled, copy .dll files to the executable directory
 if(WIN32)
+    # On Windows if BUILD_SHARED_LIBS is enabled, copy .dll files to the executable directory
     get_target_property(Open3D_type Open3D::Open3D TYPE)
     if(Open3D_type STREQUAL "SHARED_LIBRARY")
         message(STATUS "Copying Open3D.dll to ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
@@ -43,6 +43,14 @@ if(WIN32)
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                             COMMAND ${CMAKE_COMMAND} -E copy
                             "${Open3D_parent}/bin/Open3D.dll"
+                            ${PROJECT_BINARY_DIR}/$<CONFIG>)
+    endif()
+    # Copy also the testing bug point cloud from source directory
+    if(EXISTS ${PROJECT_SOURCE_DIR}/cloud/bug.ply)
+        message(STATUS "Copying bug.ply testing point cloud to ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                            COMMAND ${CMAKE_COMMAND} -E copy
+                            "${PROJECT_SOURCE_DIR}/cloud/bug.ply"
                             ${PROJECT_BINARY_DIR}/$<CONFIG>)
     endif()
 endif()
