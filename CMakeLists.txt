@@ -1,4 +1,11 @@
 #--------------------------------------------------------------------------------------------------
+#                                    Dev notes
+#--------------------------------------------------------------------------------------------------
+# 2023-01-22: modules need now to be generate, build and installed seperately. In next version we
+# should have this process automatized if the library is missing from the machine
+# 2023-01-22: we also require some testing for C++ code
+
+#--------------------------------------------------------------------------------------------------
 #                                    Info project
 #--------------------------------------------------------------------------------------------------
 # Cmake minimal version
@@ -17,48 +24,12 @@ include(GNUInstallDirs)
 #--------------------------------------------------------------------------------------------------
 #                                    Third-parties
 #--------------------------------------------------------------------------------------------------
-
-# # Option for download all the dependencies of the submodules
-# # Download all the submodules and check them
-# find_package(Git QUIET)
-# if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-# # Update submodules as needed
-#     option(GIT_SUBMODULE "Check submodules during build" ON)
-#     if(GIT_SUBMODULE)
-#         message(STATUS "Submodule update")
-#         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-#                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#                         RESULT_VARIABLE GIT_SUBMOD_RESULT)
-#         if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-#             message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-#         endif()
-#     endif()
-# endif()
-
-# # Check if open3d sub-modules were downloaded
-# if(NOT EXISTS "${PROJECT_SOURCE_DIR}/third_parties/open3d/CMakeLists.txt")
-#     message(FATAL_ERROR "The open3d submodules was not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
-# endif()
-
-# # Add Open3d sub-directory
-# add_subdirectory(third_parties/open3d)
-
-# target_include_directories(${PROJECT_NAME}
-#     PUBLIC third_parties/open3d
-# )
-
-# target_link_directories(${PROJECT_NAME}
-#     PRIVATE open3d
-# )
-
-
 # Eigen
 find_package(Eigen3 REQUIRED)
 if(Eigen3_FOUND AND Eigen3_VERSION_MAJOR GREATER_EQUAL "3" AND Eigen3_VERSION_MINOR GREATER "2")
     message(STATUS "Eigen3 version ${Eigen3_VERSION} found in the system, no need to reinstall it")
 else()
-    message(FATAL_ERROR "Eigen3 not found")
-    # download Eigen3 configure and install
+    message(FATAL_ERROR "Eigen3 not found, please install it seperately for now as indicated in documentation (https://ibois-epfl.github.io/Cockroach-documentation/docs/installation/vanilla-installation/)")
 endif()
 
 # Open3D
@@ -66,8 +37,7 @@ find_package(Open3D REQUIRED)
 if(Open3D_FOUND AND Open3D_VERSION_MAJOR LESS_EQUAL "14")
     message(STATUS "Open3d version ${Open3D_VERSION} found in the system, no need to reinstall it")
 else()
-    message(FATAL_ERROR "Open3d not found")
-    # download open3d submodule, configure, build and install
+    message(FATAL_ERROR "open3d not found, please install it seperately for now as indicated in documentation (https://ibois-epfl.github.io/Cockroach-documentation/docs/installation/vanilla-installation/)")
 endif()
 
 # Cilantro
@@ -75,8 +45,7 @@ find_package(Cilantro REQUIRED)
 if(Cilantro_FOUND)
     message(STATUS "Cilantro found in the system, no need to reinstall it")
 else()
-    message(FATAL_ERROR "Cilantro not found")
-    # download Cilantro submodule, configure, build and install
+    message(FATAL_ERROR "Cilantro not found, please install it seperately for now as indicated in documentation (https://ibois-epfl.github.io/Cockroach-documentation/docs/installation/vanilla-installation/)")
 endif()
 
 #--------------------------------------------------------------------------------------------------
@@ -97,19 +66,15 @@ target_include_directories(
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-
-
 #--------------------------------------------------------------------------------------------------
 #                                    Test
 #--------------------------------------------------------------------------------------------------
-
-# Missing testing feature (CTest?)
 
 #--------------------------------------------------------------------------------------------------
 #                                    Install
 #--------------------------------------------------------------------------------------------------
 
-# The project is build locally but it needs to be installed in the system to be referenced by other executables
+# The project is build locally but it needs to be installed in the system to be referenced by exe
 install(TARGETS ${PROJECT_NAME}
         EXPORT ${PROJECT_NAME}_Targets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -123,7 +88,6 @@ write_basic_package_version_file("${PROJECT_NAME}ConfigVersion.cmake"
                                 VERSION ${PROJECT_VERSION}
                                 COMPATIBILITY SameMajorVersion
 )
-
 if(NOT INCLUDE_INSTALL_DIR)
   set(INCLUDE_INSTALL_DIR include/Cockroach)
 endif()
