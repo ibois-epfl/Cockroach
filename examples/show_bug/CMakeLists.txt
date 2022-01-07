@@ -17,10 +17,16 @@ find_package(Open3D CONFIG REQUIRED)
 message("Open3D_DIR: ${Open3D_DIR}")
 message("Open3D_INCLUDE_DIR: ${Open3D_INCLUDE_DIR}")
 
-# Find Cockroach
-find_package(cilantro CONFIG REQUIRED)
-message("cilantro_DIR: ${cilantro_DIR}")
-message("cilantro_INCLUDE_DIR: ${cilantro_INCLUDE_DIR}")
+# Find Cilantro
+find_package(Cilantro CONFIG REQUIRED)
+if(Cilantro_FOUND)
+    message("Cilantro_DIR: ${cilantro_DIR}")
+    message("Cilantro_INCLUDE_DIR: ${cilantro_INCLUDE_DIR}")
+    include_directories(${Cilantro_INCLUDE_DIR})
+else()
+    message(FATAL_ERROR "Cilantro is required to build this project.")
+endif()
+
 
 # Find Cockroach
 find_package(Cockroach CONFIG REQUIRED)
@@ -30,10 +36,13 @@ include_directories(${Cockroach_INCLUDE_DIR})
 
 
 add_executable(${PROJECT_NAME})
-
-
-
 target_sources(${PROJECT_NAME} PRIVATE src/main.cpp)
+
+# Cilantro
+target_link_libraries(${PROJECT_NAME} PUBLIC ${Cilantro_LIBRARIES})
+# add_library(cilantro SHARED IMPORTED)
+# set_property(TARGET cilantro PROPERTY IMPORTED_LOCATION "C:/cilantro/build/Release/cilantro.dll")
+
 target_link_libraries(${PROJECT_NAME} PRIVATE Open3D::Open3D)
 
 # target_link_libraries(${PROJECT_NAME} PRIVATE cilantro::cilantro)

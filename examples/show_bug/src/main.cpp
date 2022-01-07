@@ -4,8 +4,12 @@
 
 #include <Cockroach.hpp>
 
-typedef open3d::geometry::PointCloud PC;
-typedef std::shared_ptr<PC> PC_ptr;
+typedef open3d::geometry::PointCloud PC_o3d;
+typedef std::shared_ptr<PC_o3d> PC_o3d_ptr;
+
+typedef cilantro::PointCloud3f PC_cil;
+typedef std::shared_ptr<PC_cil> PC_cil_ptr;
+
 
 
 
@@ -13,19 +17,17 @@ typedef std::shared_ptr<PC> PC_ptr;
 int main(int argc, char * argv[])
 {
     // Open cloud
-    std::shared_ptr<PC> cloud(new PC);
-    cloud = Cockroach::importCloud("bug.ply");
+    PC_o3d_ptr cloud_op3_one(new PC_o3d);
+    cloud_op3_one = Cockroach::importCloud("bug.ply");
 
-    // // Convert Open3d>>Cilantro>>Open3d
+    // Convert Open3d>>Cilantro>>Open3d
+    PC_cil_ptr cloud_cli(new PC_cil);
+    Cockroach::convert_Open3DToCilantroCloud(cloud_op3_one, cloud_cli);
+    PC_o3d_ptr cloud_op3_two(new PC_o3d);
+    Cockroach::convert_CilantroToOpen3DCloud(cloud_cli, cloud_op3_two);
 
-    // // Visualize cloud
-    Cockroach::visualize_standard(cloud);
-
-
-
-    // std::cout << argv[0] << std::endl;
-    // std::cout<<std::cin.get()<<std::endl;
-
+    // Visualize cloud
+    Cockroach::visualize_standard(cloud_op3_two);
 
     return EXIT_SUCCESS;
 }

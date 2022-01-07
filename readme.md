@@ -87,7 +87,7 @@ cmake --build build --config Release --target INSTALL
 
 mkdir build
 
-cmake -S . -B build -G "Visual Studio 16 2019" -A x64 -DBUILD_SHARED_LIBS=ON
+cmake -S . -B build -G "Visual Studio 16 2019" -A x64 -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX="C:\Program Files\cilantro"
 
 - build it
 

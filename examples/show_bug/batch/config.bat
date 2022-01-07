@@ -15,4 +15,4 @@ if exist build\ (
 
 :: Configure the project
 ECHO Configuring the CMake project now...
-cmake -S . -B build -G "Visual Studio 16 2019" -A x64
+cmake -S . -B build -G "Visual Studio 16 2019" -A x64 -DCilantro_DIR="C:\Program Files\cilantro\lib\cmake\cilantro" -DCilantro_INCLUDE_DIR="C:\Program Files\cilantro\include"
