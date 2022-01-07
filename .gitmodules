@@ -1,14 +1,3 @@
-# [submodule "third_parties/Open3D"]
-# 	path = third_parties/Open3D
-# 	url = https://github.com/isl-org/Open3D.git
-
-# [submodule "third_parties/Eigen3"]
-# 	path = third_parties/Eigen3
-# 	url = https://gitlab.com/libeigen/eigen.git
-
-# [submodule "third_parties/Cilantro"]
-# 	path = third_parties/Cilantro
-# 	url = https://github.com/kzampog/cilantro.git
 [submodule "third_parties/Eigen3"]
 	path = third_parties/Eigen3
 	url = https://gitlab.com/libeigen/eigen.git
