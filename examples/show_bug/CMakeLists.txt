@@ -1,23 +1,31 @@
+#--------------------------------------------------------------------------------------------------
+#                                    Dev notes
+#--------------------------------------------------------------------------------------------------
+
+# 2023-01-22: Notes on the current Windows-focused CMake build:
+# 1- Cilantro is compiled statically (.lib) because for Windows isn't working the CMAkeLIst.txt file
+# 2- Open3d is compiled dynamically (.dll) but can also be compiled statically
+
+#--------------------------------------------------------------------------------------------------
+#                                    Info project
+#--------------------------------------------------------------------------------------------------
+# Version and project name
 cmake_minimum_required(VERSION 3.12)
 project(show_bug LANGUAGES C CXX)
 
-
-# # The options need to be the same as Open3D's default
-# # If Open3D is configured and built with custom options, you'll also need to
-# # specify the same custom options.
-# option(STATIC_WINDOWS_RUNTIME "Use static (MT/MTd) Windows runtime" ON)
-# if(STATIC_WINDOWS_RUNTIME)
-#     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-# else()
-#     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-# endif()
-
-# Find installed Open3D, which exports Open3D::Open3D
+#--------------------------------------------------------------------------------------------------
+#                                    Packages
+#--------------------------------------------------------------------------------------------------
+# Find pre-compiled Open3D
 find_package(Open3D CONFIG REQUIRED)
-message("Open3D_DIR: ${Open3D_DIR}")
-message("Open3D_INCLUDE_DIR: ${Open3D_INCLUDE_DIR}")
+if(Open3D_FOUND)
+    message("Open3D_DIR: ${Open3D_DIR}")
+    message("Open3D_INCLUDE_DIR: ${Open3D_INCLUDE_DIR}")
+else()
+    message(FATAL_ERROR "Open3d is required to build this project.")
+endif()
 
-# Find Cilantro
+# Find pre-compiled Cilantro
 find_package(Cilantro CONFIG REQUIRED)
 if(Cilantro_FOUND)
     message("Cilantro_DIR: ${cilantro_DIR}")
@@ -27,32 +35,31 @@ else()
     message(FATAL_ERROR "Cilantro is required to build this project.")
 endif()
 
-
-# Find Cockroach
+# Find header-only Cockroach (no-linking, just include-directory)
 find_package(Cockroach CONFIG REQUIRED)
-message("Cockroach_DIR: ${Cockroach_DIR}")
-message("Cockroach_INCLUDE_DIR: ${Cockroach_INCLUDE_DIR}")
-include_directories(${Cockroach_INCLUDE_DIR})
+if(Cockroach_FOUND)
+    message("Cockroach_DIR: ${Cockroach_DIR}")
+    message("Cockroach_INCLUDE_DIR: ${Cockroach_INCLUDE_DIR}")
+    include_directories(${Cockroach_INCLUDE_DIR})
+else()
+    message(FATAL_ERROR "Cockroach is required to build this project.")
+endif()
 
-
+#--------------------------------------------------------------------------------------------------
+#                                    Executables/linking
+#--------------------------------------------------------------------------------------------------
+# Build project .sln
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE src/main.cpp)
 
-# Cilantro
+# Target libraries
 target_link_libraries(${PROJECT_NAME} PUBLIC ${Cilantro_LIBRARIES})
-# add_library(cilantro SHARED IMPORTED)
-# set_property(TARGET cilantro PROPERTY IMPORTED_LOCATION "C:/cilantro/build/Release/cilantro.dll")
-
 target_link_libraries(${PROJECT_NAME} PRIVATE Open3D::Open3D)
 
-# target_link_libraries(${PROJECT_NAME} PRIVATE cilantro::cilantro)
-
-
-
-target_link_libraries(${PROJECT_NAME} PRIVATE Cockroach::Cockroach)
-
-
-
+#--------------------------------------------------------------------------------------------------
+#                                    Post-build
+#--------------------------------------------------------------------------------------------------
+# Open3d .dll and cloud transfert to .exe directory only for windows
 if(WIN32)
     # On Windows if BUILD_SHARED_LIBS is enabled, copy .dll files to the executable directory
     get_target_property(Open3D_type Open3D::Open3D TYPE)
