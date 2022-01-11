@@ -53,8 +53,8 @@ add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE src/main.cpp)
 
 # Target libraries
-target_link_libraries(${PROJECT_NAME} PUBLIC ${Cilantro_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} PRIVATE Open3D::Open3D)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${Cilantro_LIBRARIES}) # static-library
+target_link_libraries(${PROJECT_NAME} PRIVATE Open3D::Open3D) # dynamic library
 
 #--------------------------------------------------------------------------------------------------
 #                                    Post-build
