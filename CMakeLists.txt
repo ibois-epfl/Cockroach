@@ -92,6 +92,7 @@ if(NOT INCLUDE_INSTALL_DIR)
   set(INCLUDE_INSTALL_DIR include/Cockroach)
 endif()
 
+# Configuration of module/package generation
 configure_package_config_file(
   "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
   "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
