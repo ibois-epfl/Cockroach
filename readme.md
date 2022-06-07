@@ -98,4 +98,4 @@ If you have a valid contribution or bug fix, open an issue with the source code 
 
 Visit our documentation for knowing more about which flavour to install of Cockroach.
 
-[Here!](https://ibois-epfl.github.io/Cockroach-documentation/)
+[Here!!](https://ibois-epfl.github.io/Cockroach-documentation/)
