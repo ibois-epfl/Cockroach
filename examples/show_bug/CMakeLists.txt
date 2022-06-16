@@ -2,7 +2,7 @@
 #                                    Dev notes
 #--------------------------------------------------------------------------------------------------
 
-# 2023-01-22: Notes on the current Windows-focused CMake build:
+# 2023-01-22: Notes on the current Windows-focused CMake build::
 # 1- Cilantro is compiled statically (.lib) because for Windows isn't working the CMAkeLIst.txt file
 # 2- Open3d is compiled dynamically (.dll) but can also be compiled statically
 
