@@ -1,5 +1,22 @@
 
+
+
 **Cockroach**
+
+
+**Installation**
+
+Step1 Download Release folder:
+https://github.com/ibois-epfl/Cockroach/releases/download/1.0.0/cockroach_1_0_0.zip
+
+Step2 In the directory where you downloaded and unzipped the files write following bach commands:
+```cmake
+mkdir build
+cd build
+cmake -DGET_LIBS=ON -DBUILD_MY_PROJECTS=OFF  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
+cmake -DGET_LIBS=OFF -DBUILD_MY_PROJECTS=ON  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
+```
+
  <p align="center">
   <img width="400" height="410" src="https://github.com/9and3/Cockroach/blob/Cockroach/Cockroach_logo.png">
 </p>
