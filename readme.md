@@ -25,15 +25,13 @@
 </div>
 <br/>
 
-## Installation (Windows)
+## Installation
 
 
 
-
-Current installation:
+Windows:
 * Step1 Download Release folder:
 https://github.com/ibois-epfl/Cockroach/releases/download/1.0.0/cockroach_1_0_0.zip
-
 * Step2 In the directory where you downloaded and unzipped the files write following bach commands:
 ```cmake
 mkdir build
