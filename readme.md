@@ -39,6 +39,13 @@ cd build
 cmake -DGET_LIBS=ON -DBUILD_MY_PROJECTS=OFF  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
 cmake -DGET_LIBS=OFF -DBUILD_MY_PROJECTS=ON  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
 ```
+* Step3
+Place a pointcloud in build/Release/ folder. For example bug.ply that is also uploaded in the Release folder.
+* Step4
+Run bash
+```bash
+my_exe
+```
 
 **Visit our documentation for knowing more about which flavour to install of Cockroach** [Here!!](https://ibois-epfl.github.io/Cockroach-documentation/).
 
