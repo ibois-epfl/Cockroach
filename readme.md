@@ -4,7 +4,12 @@
 **Cockroach**
 
 
-**Installation**
+**Installation (Windows)**
+
+Visit our documentation for knowing more about which flavour to install of Cockroach.
+
+[Here!!](https://ibois-epfl.github.io/Cockroach-documentation/)
+
 
 Step1 Download Release folder:
 https://github.com/ibois-epfl/Cockroach/releases/download/1.0.0/cockroach_1_0_0.zip
@@ -111,8 +116,3 @@ c)	Use CockroachGH project to develop code for Rhino and Grasshopper.
 
 If you have a valid contribution or bug fix, open an issue with the source code to merge it with the current project.
 
-**Installation**
-
-Visit our documentation for knowing more about which flavour to install of Cockroach.
-
-[Here!!](https://ibois-epfl.github.io/Cockroach-documentation/)
