@@ -1,26 +1,9 @@
 
 
 
-**Cockroach**
+# Cockroach
 
 
-**Installation (Windows)**
-
-Visit our documentation for knowing more about which flavour to install of Cockroach.
-
-[Here!!](https://ibois-epfl.github.io/Cockroach-documentation/)
-
-
-Step1 Download Release folder:
-https://github.com/ibois-epfl/Cockroach/releases/download/1.0.0/cockroach_1_0_0.zip
-
-Step2 In the directory where you downloaded and unzipped the files write following bach commands:
-```cmake
-mkdir build
-cd build
-cmake -DGET_LIBS=ON -DBUILD_MY_PROJECTS=OFF  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
-cmake -DGET_LIBS=OFF -DBUILD_MY_PROJECTS=ON  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
-```
 
  <p align="center">
   <img width="400" height="410" src="https://github.com/9and3/Cockroach/blob/Cockroach/Cockroach_logo.png">
@@ -42,6 +25,24 @@ cmake -DGET_LIBS=OFF -DBUILD_MY_PROJECTS=ON  -DBUILD_SHARED_LIBS=ON -G "Visual S
 </div>
 <br/>
 
+**Installation (Windows)**
+
+Visit our documentation for knowing more about which flavour to install of Cockroach.
+
+[Here!!](https://ibois-epfl.github.io/Cockroach-documentation/)
+
+
+Step1 Download Release folder:
+https://github.com/ibois-epfl/Cockroach/releases/download/1.0.0/cockroach_1_0_0.zip
+
+Step2 In the directory where you downloaded and unzipped the files write following bach commands:
+```cmake
+mkdir build
+cd build
+cmake -DGET_LIBS=ON -DBUILD_MY_PROJECTS=OFF  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
+cmake -DGET_LIBS=OFF -DBUILD_MY_PROJECTS=ON  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
+```
+**Description (Windows)**
 
 Cockroach is a plugin developed to introduce various commands for point cloud post-processing and meshing into Rhinoceros® [4]   environment based on reference functions already existing in the open-source library Open3D [1], CGAL [2], Cilantro [3].
 
