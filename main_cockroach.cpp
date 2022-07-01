@@ -1,8 +1,8 @@
-
 #include <iostream>
 
-
 #include <Cockroach.hpp>
+
+
 
 typedef open3d::geometry::PointCloud PC_o3d;
 typedef std::shared_ptr<PC_o3d> PC_o3d_ptr;
@@ -10,15 +10,20 @@ typedef std::shared_ptr<PC_o3d> PC_o3d_ptr;
 typedef cilantro::PointCloud3f PC_cil;
 typedef std::shared_ptr<PC_cil> PC_cil_ptr;
 
-
-
-
-
-int main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
     // Open cloud
     PC_o3d_ptr cloud_op3_one(new PC_o3d);
-    cloud_op3_one = Cockroach::importCloud("bug.ply");
+    cloud_op3_one = Cockroach::importCloud("C:\\c++\\cockroach_1_0_0\\build\\Release\\bug.ply");
+
+
+    //Compute normals
+    Cockroach::estimateUnstructuredPCDNormals(cloud_op3_one, 16, 0.1);
+
+    for (auto& normal : cloud_op3_one->normals_) {
+        std::cout << normal << std::endl << std::endl;
+    }
+
 
     // Convert Open3d>>Cilantro>>Open3d
     PC_cil_ptr cloud_cli(new PC_cil);
@@ -31,4 +36,3 @@ int main(int argc, char * argv[])
 
     return EXIT_SUCCESS;
 }
-

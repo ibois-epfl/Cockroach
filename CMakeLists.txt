@@ -1,117 +1,294 @@
-#--------------------------------------------------------------------------------------------------
-#                                    Dev notes
-#--------------------------------------------------------------------------------------------------
-# 2023-01-22: modules need now to be generate, build and installed seperately. In next version we
-# should have this process automatized if the library is missing from the machine
-# 2023-01-22: we also require some testing for C++ code
+########################################################################
+# REFERENCES AND BASH COMMANDS
+########################################################################
 
-#--------------------------------------------------------------------------------------------------
-#                                    Info project
-#--------------------------------------------------------------------------------------------------
-# Cmake minimal version
-cmake_minimum_required(VERSION 3.12)
+#https://github.com/hshikata/udivone/blob/daba4ea493189c9e0118328d5f863f6a9f3cbf2e/superbuild/CMakeLists.txt
+#https://github.com/simogasp/eesepDependencies/blob/994c701d29b753eefbe5a39cad38e5f880a31786/CMakeLists.txt
+#https://fuchsia.googlesource.com/cobalt/+/refs/tags/v0.1.3/CMakeLists.txt
 
-# Project info
-message("=========== CMake setup for Cockroach ===========")
-project(Cockroach VERSION 1.0.1 LANGUAGES CXX)
-set(PROJECT_DESCRIPTION "A header only c++ umbrella library for point cloud procecssing")
-set(PROJECT_HOMEPAGE_URL "https://github.com/ibois-epfl/Cockroach")
-set(PROJECT_EMAIL "andrea.settimi@epfl.ch")
+# bash commands
+# cmake -DGET_LIBS=ON -DBUILD_MY_PROJECTS=OFF  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
+# cmake -DGET_LIBS=OFF -DBUILD_MY_PROJECTS=ON  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
+# cmake -DGET_LIBS=ON -DBUILD_MY_PROJECTS=ON  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
+# Release\my_exe
 
-# Machine's specifics
-include(GNUInstallDirs)
 
-#--------------------------------------------------------------------------------------------------
-#                                    Third-parties
-#--------------------------------------------------------------------------------------------------
-# Eigen
-find_package(Eigen3 REQUIRED)
-if(Eigen3_FOUND AND Eigen3_VERSION_MAJOR GREATER_EQUAL "3" AND Eigen3_VERSION_MINOR GREATER "2")
-    message(STATUS "Eigen3 version ${Eigen3_VERSION} found in the system, no need to reinstall it")
-else()
-    message(FATAL_ERROR "Eigen3 not found, please install it seperately for now as indicated in documentation (https://ibois-epfl.github.io/Cockroach-documentation/docs/installation/vanilla-installation/)")
-endif()
+########################################################################
+#PROJECT INITIALIZATION
+########################################################################
+project(superbuild LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.21)
 
-# Open3D
-find_package(Open3D REQUIRED)
-if(Open3D_FOUND AND Open3D_VERSION_MAJOR LESS_EQUAL "14")
-    message(STATUS "Open3d version ${Open3D_VERSION} found in the system, no need to reinstall it")
-else()
-    message(FATAL_ERROR "open3d not found, please install it seperately for now as indicated in documentation (https://ibois-epfl.github.io/Cockroach-documentation/docs/installation/vanilla-installation/)")
-endif()
+if (MSVC)
+ message("Petras is talking to you: MSVC Compiler, this line is not needed if MinGW compiler is used")
+ #Without this message no .dll file is created, place ir after the project name
+ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-# Cilantro
-find_package(Cilantro REQUIRED)
-if(Cilantro_FOUND)
-    message(STATUS "Cilantro found in the system, no need to reinstall it")
-else()
-    message(FATAL_ERROR "Cilantro not found, please install it seperately for now as indicated in documentation (https://ibois-epfl.github.io/Cockroach-documentation/docs/installation/vanilla-installation/)")
-endif()
+ #This one copies .dlls to project build directory
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+ set(ENABLE_EXPORTS ON)
+ message(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 
-#--------------------------------------------------------------------------------------------------
-#                                    Configure
-#--------------------------------------------------------------------------------------------------
+endif (MSVC)
 
-# Specify the library as header-only as Interface
-add_library(${PROJECT_NAME} INTERFACE)
+set(CMAKE_BUILD_TYPE_INIT "Release")
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE "Release")
 
-# Specify compiler's requirements
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
+########################################################################
+# START SUPERBUILD
+########################################################################
 
-# Specify the header files' directory
-target_include_directories(
-    ${PROJECT_NAME}
-    INTERFACE
-    $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+SET(GET_LIBS "" CACHE STRING "Set option to download dependencies")
+
+cmake_policy(SET CMP0097 NEW)
+include(ExternalProject)
+
+set(LIB_DEBUG_SUFFIX "")
+if (MSVC)
+  set(LIB_DEBUG_SUFFIX "d")
+endif ()
+
+
+########################################################################
+# CGAL
+########################################################################
+
+SET(GET_LIBS "" CACHE STRING "Set option to download dependencies")
+if (GET_LIBS)
+
+ExternalProject_Add(cgal
+  URL https://github.com/CGAL/cgal/releases/download/v5.4.1/CGAL-5.4.1-library.zip
+  #GIT_REPOSITORY https://github.com/CGAL/cgal.git
+  #GIT_TAG v5.4.1
+  CMAKE_ARGS
+    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+    #-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+  SOURCE_DIR   "${CMAKE_BINARY_DIR}/install/cgal"
+  BUILD_ALWAYS "" #do not buld
+  INSTALL_COMMAND "" #installer for now is empty
 )
 
-#--------------------------------------------------------------------------------------------------
-#                                    Test
-#--------------------------------------------------------------------------------------------------
 
-#--------------------------------------------------------------------------------------------------
-#                                    Install
-#--------------------------------------------------------------------------------------------------
-
-# The project is build locally but it needs to be installed in the system to be referenced by exe
-install(TARGETS ${PROJECT_NAME}
-        EXPORT ${PROJECT_NAME}_Targets
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+ExternalProject_Add(cgal_dependencies
+  URL https://github.com/CGAL/cgal/releases/download/v5.4.1/CGAL-5.4.1-win64-auxiliary-libraries-gmp-mpfr.zip
+  CMAKE_ARGS
+    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+    #-DCMAKE_INSTALL_PREFIX:PATH="${CMAKE_BINARY_DIR}/install"
+  SOURCE_DIR   "${CMAKE_BINARY_DIR}/install/cgal/auxiliary"
+    #INSTALL_DIR   "${CMAKE_INSTALL_PREFIX}/install"
+  CONFIGURE_COMMAND "" #do not configure
+  BUILD_COMMAND "" #do not buld
+  INSTALL_COMMAND "" #installer for now is empty
 )
 
-# Version controlling
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file("${PROJECT_NAME}ConfigVersion.cmake"
-                                VERSION ${PROJECT_VERSION}
-                                COMPATIBILITY SameMajorVersion
-)
-if(NOT INCLUDE_INSTALL_DIR)
-  set(INCLUDE_INSTALL_DIR include/Cockroach)
-endif()
 
-# Configuration of module/package generation
-configure_package_config_file(
-  "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
-  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-  INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
-  PATH_VARS INCLUDE_INSTALL_DIR
+########################################################################
+# Boost
+########################################################################
+
+
+  if (WIN32)
+    set(BOOST_BOOTSTRAP_CMD ${CMAKE_CURRENT_BINARY_DIR}/boost-prefix/src/boost/bootstrap.bat)
+    set(BOOST_BUILD_CMD ${CMAKE_CURRENT_BINARY_DIR}/boost-prefix/src/boost/b2.exe)
+  elseif (UNIX)
+    set(BOOST_BOOTSTRAP_CMD ${CMAKE_CURRENT_BINARY_DIR}/boost-prefix/src/boost/bootstrap.sh)
+    set(BOOST_BUILD_CMD ${CMAKE_CURRENT_BINARY_DIR}/boost-prefix/src/boost/b2)
+  endif ()
+
+  ExternalProject_Add(boost
+    GIT_REPOSITORY https://github.com/boostorg/boost.git
+    GIT_TAG boost-1.78.0
+    CONFIGURE_COMMAND ${BOOST_BOOTSTRAP_CMD}
+    BUILD_COMMAND
+      ${BOOST_BUILD_CMD}
+      --prefix=${CMAKE_BINARY_DIR}/install/boost
+      -sZLIB_LIBRARY_PATH=${CMAKE_BINARY_DIR}/install/boost/lib
+      --without-python
+      address-model=64
+      variant=debug,release
+      link=shared
+      runtime-link=shared
+      threading=multi
+      install
+    BUILD_IN_SOURCE 1
+    INSTALL_COMMAND ""
+    #SOURCE_DIR "${CMAKE_BINARY_DIR}/install/boost" #install directory is in build/install/eigen
+  )
+
+
+
+########################################################################
+# EIGEN
+########################################################################
+
+  message(AUTHOR_WARNING "GET_LIBS_" ${GET_LIBS})
+  ExternalProject_Add(eigen
+    GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+    GIT_TAG 3.4.0
+    CMAKE_ARGS
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+      -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/eigen #has not effect
+    SOURCE_DIR   "${CMAKE_BINARY_DIR}/install/eigen" #install directory is in build/install/eigen
+    BUILD_COMMAND "" #do not build
+    INSTALL_COMMAND "" #do not install
+  )
+
+########################################################################
+# CILANTRO
+########################################################################
+
+
+ExternalProject_Add(cilantro
+GIT_REPOSITORY https://github.com/kzampog/cilantro.git
+CMAKE_ARGS
+  -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+  -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+  -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install/cilantro #has not effect
+SOURCE_DIR   "${CMAKE_BINARY_DIR}/install/cilantro" #install directory is in build/install/eigen
+#INSTALL_DIR "${CMAKE_BINARY_DIR}/install/cilantro/build" 
+BUILD_ALWAYS ON #do not buld
+BUILD_IN_SOURCE  TRUE
+INSTALL_COMMAND "" #do not install
 )
 
-# The installation configuration is over and the install can happen
-install(EXPORT ${PROJECT_NAME}_Targets
-  FILE ${PROJECT_NAME}Targets.cmake
-  NAMESPACE ${PROJECT_NAME}::
-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
+########################################################################
+# OPEN3D
+########################################################################
+
+#http://www.open3d.org/docs/latest/getting_started.html#c
+ExternalProject_Add(open3d
+
+  URL https://github.com/isl-org/Open3D/releases/download/v0.15.1/open3d-devel-windows-amd64-0.15.1.zip
+  
+  CMAKE_ARGS
+    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+    #-DCMAKE_INSTALL_PREFIX:PATH="${CMAKE_BINARY_DIR}/install"
+  SOURCE_DIR   "${CMAKE_BINARY_DIR}/install/open3d"
+    #INSTALL_DIR   "${CMAKE_INSTALL_PREFIX}/install"
+  CONFIGURE_COMMAND "" #do not configure
+  BUILD_COMMAND "" #do not buld
+  INSTALL_COMMAND "" #installer for now is empty
 )
 
-# Produce the cmake configuration files to be reused by other CMake projects
-install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-        "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake
+
+########################################################################
+# COCKROACH
+########################################################################
+
+ExternalProject_Add(cockroach
+  URL https://github.com/ibois-epfl/Cockroach/releases/download/1.0.0/cockroach_headers.zip
+  CMAKE_ARGS
+    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+    #-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+  SOURCE_DIR   "${CMAKE_BINARY_DIR}/install/cockroach"
+  CONFIGURE_COMMAND "" #do not configure
+  BUILD_COMMAND "" #do not buld
+  INSTALL_COMMAND "" #installer for now is empty
 )
 
-# All the header files are actually copied
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+endif ()
+
+
+
+
+
+
+
+########################################################################
+#EXECUTABLE THANK LINK HEADER ONLY DIRECTORY
+########################################################################
+
+SET(BUILD_MY_PROJECTS "" CACHE STRING "Build Project")
+if (BUILD_MY_PROJECTS)
+    message(AUTHOR_WARNING "${CMAKE_BINARY_DIR}/install/cockroach/")
+
+
+
+    #C:/IBOIS57/_Code/Software/CPP/CMAKE/super_build/example_cockroach/build/install/cockroach/Cockroach.hpp
+    #C:/IBOIS57/_Code/Software/CPP/CMAKE/super_build/example_cockroach/build/install/cockroach/
+
+  add_executable(my_exe main_cockroach.cpp)
+  #include_directories("${CMAKE_BINARY_DIR}/install/eigen/") #add directory of the EIGEN header-only library 
+  #target_include_directories(my_exe PRIVATE "${CMAKE_BINARY_DIR}/install/boost/include/boost-1_78/") #add directory of the EIGEN header-only library 
+ 
+ 
+  list(APPEND includePath 
+  "${CMAKE_BINARY_DIR}/install/boost/include/boost-1_78/"
+  "${CMAKE_BINARY_DIR}/install/eigen/"
+  "${CMAKE_BINARY_DIR}/install/cgal/include"
+  "${CMAKE_BINARY_DIR}/install/cgal/auxiliary/gmp/include"
+  "${CMAKE_BINARY_DIR}/install/cilantro/include/"
+  "${CMAKE_BINARY_DIR}/install/open3d/CMake/"
+  "${CMAKE_BINARY_DIR}/install/open3d/include/"
+  "${CMAKE_BINARY_DIR}/install/open3d/include/open3d/pipelines/registration"
+  "${CMAKE_BINARY_DIR}/install/cockroach/"
+  #"${CMAKE_BINARY_DIR}/install/cockroach/Cockroach"
+
+  )
+
+  target_include_directories(my_exe PRIVATE "$<BUILD_INTERFACE:${includePath}>") #add directory of the EIGEN header-only library 
+
+
+  #Link libraries, Open3D and Cilantro
+  target_link_directories(my_exe PUBLIC "${CMAKE_BINARY_DIR}/install/cilantro/Release")
+  #target_link_libraries(my_exe PUBLIC Open3D::Open3D cilantro )#link compiled open3d library
+
+  include( "${CMAKE_BINARY_DIR}/install/open3d/CMake/Open3DConfig.cmake")
+  target_link_libraries(my_exe PUBLIC cilantro Open3D::Open3D)#link compiled open3d library
+
+
+
+  #Copy Open3D.dll to Release folder
+
+  add_custom_command(TARGET my_exe POST_BUILD        # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
+        "${CMAKE_BINARY_DIR}/install/open3d/bin/Open3D.dll"      # <--this is in-file
+        "${CMAKE_BINARY_DIR}/Release")                 # <--this is out-file path
+
+  #install(FILES "${CMAKE_BINARY_DIR}/install/open3d/bin/Open3D.dll" DESTINATION "${CMAKE_BINARY_DIR}/Release")
+  
+
+endif ()
+
+
+#[[
+
+###############################################################################
+#EXECUTABLE THANK LINK HEADER ONLY DIRECTORY
+###############################################################################
+SET(BUILD_MY_PROJECTS "" CACHE STRING "Build Project")
+if (BUILD_MY_PROJECTS)
+  message(AUTHOR_WARNING "BUILD_MY_PROJECTS_" ${BUILD_MY_PROJECTS})
+  message(AUTHOR_WARNING "${CMAKE_BINARY_DIR}/install/cilantro/Release")
+  add_executable(my_exe main_cilantro.cpp)
+
+
+  list(APPEND includePath 
+ # "${CMAKE_BINARY_DIR}/install/"
+ # "${CMAKE_BINARY_DIR}/install/cilantro/"
+ # "${CMAKE_BINARY_DIR}/install/cilantro/Release"
+  "${CMAKE_BINARY_DIR}/install/cilantro/include/"
+ # "${CMAKE_BINARY_DIR}/install/cilantro/include/cilantro/"
+ # "${CMAKE_BINARY_DIR}/install/cilantro/include/cilantro/core"
+  "${CMAKE_BINARY_DIR}/install/eigen/"
+  )
+  # C:/IBOIS57/_Code/Software/CPP/CMAKE/super_build/example_cilantro/build/install/cilantro/include/cilantro/core
+  #message(AUTHOR_WARNING "${CMAKE_BINARY_DIR}/install/cilantro/include/cilantro/core")
+  #target_include_directories(my_exe PRIVATE "${CMAKE_BINARY_DIR}/install/boost/include/boost-1_78/") #add directory of the EIGEN header-only library 
+ 
+  target_include_directories(my_exe PRIVATE "$<BUILD_INTERFACE:${includePath}>") #add directory of the EIGEN header-only library 
+  #cilantro library linking
+  target_link_directories(my_exe PUBLIC  "${CMAKE_BINARY_DIR}/install/cilantro/Release")
+  target_link_libraries(my_exe PUBLIC cilantro)
+endif ()
+]]
+
+
