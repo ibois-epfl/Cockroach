@@ -27,7 +27,7 @@
 
 ## Installation (Windows)
 
-** Visit our documentation for knowing more about which flavour to install of Cockroach [Here!!](https://ibois-epfl.github.io/Cockroach-documentation/). **
+**Visit our documentation for knowing more about which flavour to install of Cockroach [Here!!]**(https://ibois-epfl.github.io/Cockroach-documentation/).
 
 
 
