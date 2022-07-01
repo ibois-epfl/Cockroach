@@ -1,5 +1,10 @@
 
-**Cockroach**
+
+
+# Cockroach
+
+
+
  <p align="center">
   <img width="400" height="410" src="https://github.com/9and3/Cockroach/blob/Cockroach/Cockroach_logo.png">
 </p>
@@ -20,6 +25,31 @@
 </div>
 <br/>
 
+## Installation
+
+
+
+Windows:
+* Step1 Download Release folder:
+https://github.com/ibois-epfl/Cockroach/releases/download/1.0.0/cockroach_1_0_0.zip
+* Step2 In the directory where you downloaded and unzipped the files write following bach commands:
+```cmake
+mkdir build
+cd build
+cmake -DGET_LIBS=ON -DBUILD_MY_PROJECTS=OFF  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
+cmake -DGET_LIBS=OFF -DBUILD_MY_PROJECTS=ON  -DBUILD_SHARED_LIBS=ON -G "Visual Studio 17 2022" -A x64 .. && cmake --build . --config Release
+```
+* Step3
+Place a pointcloud in **build/Release/** folder. For example **bug.ply** that is also uploaded in the Release folder.
+* Step4
+Run bash
+```bash
+my_exe
+```
+
+**Visit our documentation for knowing more about which flavour to install of Cockroach** [Here!!](https://ibois-epfl.github.io/Cockroach-documentation/).
+
+## Description
 
 Cockroach is a plugin developed to introduce various commands for point cloud post-processing and meshing into Rhinoceros® [4]   environment based on reference functions already existing in the open-source library Open3D [1], CGAL [2], Cilantro [3].
 
@@ -44,17 +74,8 @@ We want to thank Dale Fugier (McNeel) for his help during C++ plugin development
 
 [4] https://www.rhino3d.com/ 
 
-**Notes on the current version**
 
-We are refactoring the library! This will take some time and this version represents a first milestone: a header-only library for windows. Next we will make it possible for Linux and refactor the code for Cockroach Rhino and Grasshopper.
-
-**Dependencies**
-
-Recent build and example files will be stored in Build directory. The method are run in two ways: a) Rhino plugin command-lines starting as Cockroach_CommandName, b) Grasshopper plugin. You will need to download the necessary dependencies to run the algorithms in Rhinoceros®. The dependencies could be acquired in two ways:
-1.	Download Cockroach from www.food4rhino.com/
-2.	Compile Open3D as a Dynamic Library from: Open3D repository: https://github.com/intel-isl/Open3D/blob/master/README.md. Compile Cilantro https://github.com/kzampog/cilantro and CGAL 5.2 https://github.com/CGAL/cgal/releases/tag/v5.2 .
-
-**Citation**
+## Citation
 
 Please use this citation if you use Cockroach in published work. Also, please also cite the third-party libraries we used: Open3D  (https://github.com/intel-isl/Open3D/blob/master/README.md) , CGAL (https://doc.cgal.org/latest/Manual/how_to_cite_cgal.html ), Cilantro (https://github.com/kzampog/cilantro/blob/master/README.md ).
 
@@ -73,15 +94,15 @@ Citation (no Bibtex):
 Petras Vestartas and Andrea Settimi, Cockroach: A Plug-in for Point Cloud Post-Processing and Meshing in Rhino Environment, EPFL ENAC ICC IBOIS, 2020, https://github.com/9and3/Cockroach.
 ```
 
-**Contact**
+## Contact
 
 For code request or chat, i.e. open GitHub issue or contact us by email. Some data, models or generated code using our research are available from the corresponding authors by request: [Petras Vestartas](petrasvestartas@gmail.com) or [Andrea Settimi](andrea.settimi@epfl.ch).
 
-**Acknowledgements**
+##  Acknowledgements
 
 The laboratory for Timber Construction (IBOIS) at École Polytechnique Fédérale de Lausanne (EPFL) financially supports the authors contribution to the current research and version 1.0.0 development of the .NET PointCloud processing tool.
 
-**License**
+## License
 
 Cockroach is released under LGPL license. If you use Cockroach in published work, please also cite the third-party libraries we used: Open3D, CGAL, Cilantro. We encourage use for research purposes, as long as proper attribution is given. Feel free to send us an email and let us know how Cockroach has been useful to you and how it can be improved.
 
@@ -94,8 +115,3 @@ c)	Use CockroachGH project to develop code for Rhino and Grasshopper.
 
 If you have a valid contribution or bug fix, open an issue with the source code to merge it with the current project.
 
-**Installation**
-
-Visit our documentation for knowing more about which flavour to install of Cockroach.
-
-[Here!!](https://ibois-epfl.github.io/Cockroach-documentation/)
