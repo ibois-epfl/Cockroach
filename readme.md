@@ -32,7 +32,8 @@
 Windows:
 * Step1 Download Release folder:
 https://github.com/ibois-epfl/Cockroach/releases/download/1.0.0/cockroach_1_0_0.zip
-* Step2 In the directory where you downloaded and unzipped the files write following bach commands:
+* Step2 In the directory where you downloaded and unzipped the files write the following bash commands 
+(your compiler can be different e.g. "Visual Studio 16 2019" instead of "Visual Studio 17 2022"):
 ```cmake
 mkdir build
 cd build
@@ -42,10 +43,13 @@ cmake -DGET_LIBS=OFF -DBUILD_MY_PROJECTS=ON  -DBUILD_SHARED_LIBS=ON -G "Visual S
 * Step3
 Place a pointcloud in **build/Release/** folder. For example **bug.ply** that is also uploaded in the Release folder.
 * Step4
-Run bash
+Run the compiled exe file using using bash or manually
 ```bash
 my_exe
 ```
+* Step5 (Optional)
+To reduce the compilation time we recommend to use precompiled headers: https://www.youtube.com/watch?v=eSI4wctZUto
+
 
 **Visit our documentation for knowing more about which flavour to install of Cockroach** [Here!!](https://ibois-epfl.github.io/Cockroach-documentation/).
 
