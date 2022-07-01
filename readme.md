@@ -29,7 +29,8 @@
 
 
 
-Windows:
+**Windows**
+
 * Step1 Download Release folder:
 https://github.com/ibois-epfl/Cockroach/releases/download/1.0.0/cockroach_1_0_0.zip
 * Step2 In the directory where you downloaded and unzipped the files write the following bash commands 
@@ -48,7 +49,8 @@ Run the compiled exe file using using bash or manually
 my_exe
 ```
 * Step5 (Optional)
-To reduce the compilation time we recommend to use precompiled headers: https://www.youtube.com/watch?v=eSI4wctZUto
+To reduce the compilation time we recommend to use precompiled headers: 
+https://www.youtube.com/watch?v=eSI4wctZUto
 
 
 **Visit our documentation for knowing more about which flavour to install of Cockroach** [Here!!](https://ibois-epfl.github.io/Cockroach-documentation/).
